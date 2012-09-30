@@ -20,7 +20,6 @@ Dim smusic() As String
     
     ' we're in the map editor
     InMapEditor = True
-    LoadAllTilesets
     
     ' show the form
     frmEditor_Map.Visible = True
@@ -53,8 +52,8 @@ errorhandler:
 End Sub
 
 Public Sub MapEditorProperties()
-Dim X As Long
-Dim Y As Long
+Dim x As Long
+Dim y As Long
 Dim i As Long
     
     ' If debug mode, handle error then exit out
@@ -123,11 +122,11 @@ Dim i As Long
 
         ' show the map npcs
         .lstNpcs.Clear
-        For X = 1 To MAX_MAP_NPCS
-            If Map.Npc(X) > 0 Then
-            .lstNpcs.AddItem X & ": " & Trim$(Npc(Map.Npc(X)).name)
+        For x = 1 To MAX_MAP_NPCS
+            If Map.Npc(x) > 0 Then
+            .lstNpcs.AddItem x & ": " & Trim$(Npc(Map.Npc(x)).name)
             Else
-                .lstNpcs.AddItem X & ": No NPC"
+                .lstNpcs.AddItem x & ": No NPC"
             End If
         Next
         .lstNpcs.ListIndex = 0
@@ -135,8 +134,8 @@ Dim i As Long
         ' show the npc selection combo
         .cmbNpc.Clear
         .cmbNpc.AddItem "No NPC"
-        For X = 1 To MAX_NPCS
-            .cmbNpc.AddItem X & ": " & Trim$(Npc(X).name)
+        For x = 1 To MAX_NPCS
+            .cmbNpc.AddItem x & ": " & Trim$(Npc(x).name)
         Next
         
         ' set the combo box properly
@@ -160,20 +159,20 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub MapEditorSetTile(ByVal X As Long, ByVal Y As Long, ByVal CurLayer As Long, Optional ByVal multitile As Boolean = False, Optional ByVal theAutotile As Byte = 0)
+Public Sub MapEditorSetTile(ByVal x As Long, ByVal y As Long, ByVal CurLayer As Long, Optional ByVal multitile As Boolean = False, Optional ByVal theAutotile As Byte = 0)
 Dim x2 As Long, y2 As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If theAutotile > 0 Then
-        With Map.Tile(X, Y)
+        With Map.Tile(x, y)
             ' set layer
-            .Layer(CurLayer).X = EditorTileX
-            .Layer(CurLayer).Y = EditorTileY
+            .Layer(CurLayer).x = EditorTileX
+            .Layer(CurLayer).y = EditorTileY
             .Layer(CurLayer).Tileset = frmEditor_Map.scrlTileSet.value
             .Autotile(CurLayer) = theAutotile
-            CacheRenderState X, Y, CurLayer
+            CacheRenderState x, y, CurLayer
         End With
         ' do a re-init so we can see our changes
         initAutotiles
@@ -181,27 +180,27 @@ Dim x2 As Long, y2 As Long
     End If
 
     If Not multitile Then ' single
-        With Map.Tile(X, Y)
+        With Map.Tile(x, y)
             ' set layer
-            .Layer(CurLayer).X = EditorTileX
-            .Layer(CurLayer).Y = EditorTileY
+            .Layer(CurLayer).x = EditorTileX
+            .Layer(CurLayer).y = EditorTileY
             .Layer(CurLayer).Tileset = frmEditor_Map.scrlTileSet.value
             .Autotile(CurLayer) = 0
-            CacheRenderState X, Y, CurLayer
+            CacheRenderState x, y, CurLayer
         End With
     Else ' multitile
         y2 = 0 ' starting tile for y axis
-        For Y = CurY To CurY + EditorTileHeight - 1
+        For y = CurY To CurY + EditorTileHeight - 1
             x2 = 0 ' re-set x count every y loop
-            For X = CurX To CurX + EditorTileWidth - 1
-                If X >= 0 And X <= Map.MaxX Then
-                    If Y >= 0 And Y <= Map.MaxY Then
-                        With Map.Tile(X, Y)
-                            .Layer(CurLayer).X = EditorTileX + x2
-                            .Layer(CurLayer).Y = EditorTileY + y2
+            For x = CurX To CurX + EditorTileWidth - 1
+                If x >= 0 And x <= Map.MaxX Then
+                    If y >= 0 And y <= Map.MaxY Then
+                        With Map.Tile(x, y)
+                            .Layer(CurLayer).x = EditorTileX + x2
+                            .Layer(CurLayer).y = EditorTileY + y2
                             .Layer(CurLayer).Tileset = frmEditor_Map.scrlTileSet.value
                             .Autotile(CurLayer) = 0
-                            CacheRenderState X, Y, CurLayer
+                            CacheRenderState x, y, CurLayer
                         End With
                     End If
                 End If
@@ -219,7 +218,7 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub MapEditorMouseDown(ByVal Button As Integer, ByVal X As Long, ByVal Y As Long, Optional ByVal movedMouse As Boolean = True)
+Public Sub MapEditorMouseDown(ByVal Button As Integer, ByVal x As Long, ByVal y As Long, Optional ByVal movedMouse As Boolean = True)
 Dim i As Long
 Dim CurLayer As Long
 Dim tmpDir As Byte
@@ -372,12 +371,12 @@ Dim tmpDir As Byte
         ElseIf frmEditor_Map.optBlock.value Then
             If movedMouse Then Exit Sub
             ' find what tile it is
-            X = X - ((X \ 32) * 32)
-            Y = Y - ((Y \ 32) * 32)
+            x = x - ((x \ 32) * 32)
+            y = y - ((y \ 32) * 32)
             ' see if it hits an arrow
             For i = 1 To 4
-                If X >= DirArrowX(i) And X <= DirArrowX(i) + 8 Then
-                    If Y >= DirArrowY(i) And Y <= DirArrowY(i) + 8 Then
+                If x >= DirArrowX(i) And x <= DirArrowX(i) + 8 Then
+                    If y >= DirArrowY(i) And y <= DirArrowY(i) + 8 Then
                         ' flip the value.
                         setDirBlock Map.Tile(CurX, CurY).DirBlock, CByte(i), Not isDirBlocked(Map.Tile(CurX, CurY).DirBlock, CByte(i))
                         Exit Sub
@@ -391,15 +390,15 @@ Dim tmpDir As Byte
         If frmEditor_Map.optLayers.value Then
             With Map.Tile(CurX, CurY)
                 ' clear layer
-                .Layer(CurLayer).X = 0
-                .Layer(CurLayer).Y = 0
+                .Layer(CurLayer).x = 0
+                .Layer(CurLayer).y = 0
                 .Layer(CurLayer).Tileset = 0
                 If .Autotile(CurLayer) > 0 Then
                     .Autotile(CurLayer) = 0
                     ' do a re-init so we can see our changes
                     initAutotiles
                 End If
-                CacheRenderState X, Y, CurLayer
+                CacheRenderState x, y, CurLayer
             End With
         ElseIf frmEditor_Map.optEvent.value Then
             Call DeleteEvent(CurX, CurY)
@@ -425,7 +424,7 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub MapEditorChooseTile(Button As Integer, X As Single, Y As Single)
+Public Sub MapEditorChooseTile(Button As Integer, x As Single, y As Single)
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
@@ -433,8 +432,8 @@ Public Sub MapEditorChooseTile(Button As Integer, X As Single, Y As Single)
         EditorTileWidth = 1
         EditorTileHeight = 1
         
-        EditorTileX = X \ PIC_X
-        EditorTileY = Y \ PIC_Y
+        EditorTileX = x \ PIC_X
+        EditorTileY = y \ PIC_Y
     End If
     
     ' Error handler
@@ -445,27 +444,27 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub MapEditorDrag(Button As Integer, X As Single, Y As Single)
+Public Sub MapEditorDrag(Button As Integer, x As Single, y As Single)
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If Button = vbLeftButton Then
         ' convert the pixel number to tile number
-        X = (X \ PIC_X) + 1
-        Y = (Y \ PIC_Y) + 1
+        x = (x \ PIC_X) + 1
+        y = (y \ PIC_Y) + 1
         ' check it's not out of bounds
-        If X < 0 Then X = 0
-        If X > Tex_Tileset(frmEditor_Map.scrlTileSet.value).Width / PIC_X Then X = Tex_Tileset(frmEditor_Map.scrlTileSet.value).Width / PIC_X
-        If Y < 0 Then Y = 0
-        If Y > Tex_Tileset(frmEditor_Map.scrlTileSet.value).Height / PIC_Y Then Y = Tex_Tileset(frmEditor_Map.scrlTileSet.value).Height / PIC_Y
+        If x < 0 Then x = 0
+        If x > Tex_Tileset(frmEditor_Map.scrlTileSet.value).Width / PIC_X Then x = Tex_Tileset(frmEditor_Map.scrlTileSet.value).Width / PIC_X
+        If y < 0 Then y = 0
+        If y > Tex_Tileset(frmEditor_Map.scrlTileSet.value).Height / PIC_Y Then y = Tex_Tileset(frmEditor_Map.scrlTileSet.value).Height / PIC_Y
         ' find out what to set the width + height of map editor to
-        If X > EditorTileX Then ' drag right
-            EditorTileWidth = X - EditorTileX
+        If x > EditorTileX Then ' drag right
+            EditorTileWidth = x - EditorTileX
         Else ' drag left
             ' TO DO
         End If
-        If Y > EditorTileY Then ' drag down
-            EditorTileHeight = Y - EditorTileY
+        If y > EditorTileY Then ' drag down
+            EditorTileHeight = y - EditorTileY
         Else ' drag up
             ' TO DO
         End If
@@ -544,8 +543,8 @@ End Sub
 
 Public Sub MapEditorClearLayer()
 Dim i As Long
-Dim X As Long
-Dim Y As Long
+Dim x As Long
+Dim y As Long
 Dim CurLayer As Long
 
     ' If debug mode, handle error then exit out
@@ -563,12 +562,12 @@ Dim CurLayer As Long
 
     ' ask to clear layer
     If MsgBox("Are you sure you wish to clear this layer?", vbYesNo, Options.Game_Name) = vbYes Then
-        For X = 0 To Map.MaxX
-            For Y = 0 To Map.MaxY
-                Map.Tile(X, Y).Layer(CurLayer).X = 0
-                Map.Tile(X, Y).Layer(CurLayer).Y = 0
-                Map.Tile(X, Y).Layer(CurLayer).Tileset = 0
-                CacheRenderState X, Y, CurLayer
+        For x = 0 To Map.MaxX
+            For y = 0 To Map.MaxY
+                Map.Tile(x, y).Layer(CurLayer).x = 0
+                Map.Tile(x, y).Layer(CurLayer).y = 0
+                Map.Tile(x, y).Layer(CurLayer).Tileset = 0
+                CacheRenderState x, y, CurLayer
             Next
         Next
         
@@ -585,8 +584,8 @@ End Sub
 
 Public Sub MapEditorFillLayer()
 Dim i As Long
-Dim X As Long
-Dim Y As Long
+Dim x As Long
+Dim y As Long
 Dim CurLayer As Long
 
     ' If debug mode, handle error then exit out
@@ -601,13 +600,13 @@ Dim CurLayer As Long
     Next
 
     If MsgBox("Are you sure you wish to fill this layer?", vbYesNo, Options.Game_Name) = vbYes Then
-        For X = 0 To Map.MaxX
-            For Y = 0 To Map.MaxY
-                Map.Tile(X, Y).Layer(CurLayer).X = EditorTileX
-                Map.Tile(X, Y).Layer(CurLayer).Y = EditorTileY
-                Map.Tile(X, Y).Layer(CurLayer).Tileset = frmEditor_Map.scrlTileSet.value
-                Map.Tile(X, Y).Autotile(CurLayer) = frmEditor_Map.scrlAutotile.value
-                CacheRenderState X, Y, CurLayer
+        For x = 0 To Map.MaxX
+            For y = 0 To Map.MaxY
+                Map.Tile(x, y).Layer(CurLayer).x = EditorTileX
+                Map.Tile(x, y).Layer(CurLayer).y = EditorTileY
+                Map.Tile(x, y).Layer(CurLayer).Tileset = frmEditor_Map.scrlTileSet.value
+                Map.Tile(x, y).Autotile(CurLayer) = frmEditor_Map.scrlAutotile.value
+                CacheRenderState x, y, CurLayer
             Next
         Next
         
@@ -626,17 +625,17 @@ errorhandler:
 End Sub
 
 Public Sub MapEditorClearAttribs()
-Dim X As Long
-Dim Y As Long
+Dim x As Long
+Dim y As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If MsgBox("Are you sure you wish to clear the attributes on this map?", vbYesNo, Options.Game_Name) = vbYes Then
 
-        For X = 0 To Map.MaxX
-            For Y = 0 To Map.MaxY
-                Map.Tile(X, Y).Type = 0
+        For x = 0 To Map.MaxX
+            For y = 0 To Map.MaxY
+                Map.Tile(x, y).Type = 0
             Next
         Next
 
@@ -1393,8 +1392,8 @@ Dim SoundSet As Boolean
         .scrlCool.value = Spell(EditorIndex).CDTime
         .scrlIcon.value = Spell(EditorIndex).Icon
         .scrlMap.value = Spell(EditorIndex).Map
-        .scrlX.value = Spell(EditorIndex).X
-        .scrlY.value = Spell(EditorIndex).Y
+        .scrlX.value = Spell(EditorIndex).x
+        .scrlY.value = Spell(EditorIndex).y
         .scrlDir.value = Spell(EditorIndex).Dir
         .scrlVital.value = Spell(EditorIndex).Vital
         .scrlDuration.value = Spell(EditorIndex).Duration
@@ -1512,13 +1511,13 @@ End Sub
 
 'Event Editor Stuffz Also includes event functions from the map editor (copy/paste/delete)
 
-Sub CopyEvent_Map(X As Long, Y As Long)
+Sub CopyEvent_Map(x As Long, y As Long)
 Dim count As Long, i As Long
     count = Map.EventCount
     If count = 0 Then Exit Sub
     
     For i = 1 To count
-        If Map.Events(i).X = X And Map.Events(i).Y = Y Then
+        If Map.Events(i).x = x And Map.Events(i).y = y Then
             ' copy it
             'CopyMemory ByVal VarPtr(cpEvent), ByVal VarPtr(Map.Events(i)), LenB(Map.Events(i))
             cpEvent = Map.Events(i)
@@ -1528,13 +1527,13 @@ Dim count As Long, i As Long
     Next
 End Sub
 
-Sub PasteEvent_Map(X As Long, Y As Long)
+Sub PasteEvent_Map(x As Long, y As Long)
 Dim count As Long, i As Long, eventNum As Long
     count = Map.EventCount
     
     If count > 0 Then
         For i = 1 To count
-            If Map.Events(i).X = X And Map.Events(i).Y = Y Then
+            If Map.Events(i).x = x And Map.Events(i).y = y Then
                 ' already an event - paste over it
                 eventNum = i
             End If
@@ -1544,7 +1543,7 @@ Dim count As Long, i As Long, eventNum As Long
     ' couldn't find one - create one
     If eventNum = 0 Then
         ' increment count
-        AddEvent X, Y, True
+        AddEvent x, y, True
         eventNum = count + 1
     End If
     
@@ -1553,17 +1552,17 @@ Dim count As Long, i As Long, eventNum As Long
     Map.Events(eventNum) = cpEvent
     
     ' set position
-    Map.Events(eventNum).X = X
-    Map.Events(eventNum).Y = Y
+    Map.Events(eventNum).x = x
+    Map.Events(eventNum).y = y
 End Sub
 
-Sub DeleteEvent(X As Long, Y As Long)
+Sub DeleteEvent(x As Long, y As Long)
 Dim count As Long, i As Long, lowIndex As Long
     If Not InMapEditor Then Exit Sub
     If frmEditor_Events.Visible = True Then Exit Sub
     count = Map.EventCount
     For i = 1 To count
-        If Map.Events(i).X = X And Map.Events(i).Y = Y Then
+        If Map.Events(i).x = x And Map.Events(i).y = y Then
             ' delete it
             ClearEvent i
             lowIndex = i
@@ -1584,13 +1583,13 @@ Dim count As Long, i As Long, lowIndex As Long
     Map.EventCount = count - 1
 End Sub
 
-Sub AddEvent(X As Long, Y As Long, Optional ByVal cancelLoad As Boolean = False)
+Sub AddEvent(x As Long, y As Long, Optional ByVal cancelLoad As Boolean = False)
 Dim count As Long, pageCount As Long, i As Long
     count = Map.EventCount + 1
     ' make sure there's not already an event
     If count - 1 > 0 Then
         For i = 1 To count - 1
-            If Map.Events(i).X = X And Map.Events(i).Y = Y Then
+            If Map.Events(i).x = x And Map.Events(i).y = y Then
                 ' already an event - edit it
                 If Not cancelLoad Then EventEditorInit i
                 Exit Sub
@@ -1601,8 +1600,8 @@ Dim count As Long, pageCount As Long, i As Long
     Map.EventCount = count
     ReDim Preserve Map.Events(0 To count)
     ' set the new event
-    Map.Events(count).X = X
-    Map.Events(count).Y = Y
+    Map.Events(count).x = x
+    Map.Events(count).y = y
     ' give it a new page
     pageCount = Map.Events(count).pageCount + 1
     Map.Events(count).pageCount = pageCount
@@ -1764,14 +1763,14 @@ Sub EventEditorOK()
 End Sub
 
 Public Sub EventListCommands()
-Dim i As Long, curlist As Long, oldI As Long, X As Long, indent As String, listleftoff() As Long, conditionalstage() As Long
+Dim i As Long, curlist As Long, oldI As Long, x As Long, indent As String, listleftoff() As Long, conditionalstage() As Long
     frmEditor_Events.lstCommands.Clear
     If tmpEvent.Pages(curPageNum).CommandListCount > 0 Then
     ReDim listleftoff(1 To tmpEvent.Pages(curPageNum).CommandListCount)
     ReDim conditionalstage(1 To tmpEvent.Pages(curPageNum).CommandListCount)
         'Start Up at 1
         curlist = 1
-        X = -1
+        x = -1
 newlist:
         For i = 1 To tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount
             If listleftoff(curlist) > 0 Then
@@ -1783,12 +1782,12 @@ newlist:
             End If
             If i <= tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount Then
                 If tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Index = EventType.evCondition Then
-                    X = X + 1
+                    x = x + 1
                     Select Case conditionalstage(curlist)
                         Case 0
-                            ReDim Preserve EventList(X)
-                            EventList(X).CommandList = curlist
-                            EventList(X).CommandNum = i
+                            ReDim Preserve EventList(x)
+                            EventList(x).CommandList = curlist
+                            EventList(x).CommandNum = i
                             Select Case tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).ConditionalBranch.Condition
                                 Case 0
                                     Select Case tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).ConditionalBranch.Data2
@@ -1864,30 +1863,30 @@ newlist:
                             curlist = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).ConditionalBranch.CommandList
                             GoTo newlist
                         Case 1
-                            ReDim Preserve EventList(X)
-                            EventList(X).CommandList = curlist
-                            EventList(X).CommandNum = 0
+                            ReDim Preserve EventList(x)
+                            EventList(x).CommandList = curlist
+                            EventList(x).CommandNum = 0
                             frmEditor_Events.lstCommands.AddItem Mid(indent, 1, Len(indent) - 4) & " : " & "Else"
                             listleftoff(curlist) = i
                             conditionalstage(curlist) = 2
                             curlist = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).ConditionalBranch.ElseCommandList
                             GoTo newlist
                         Case 2
-                            ReDim Preserve EventList(X)
-                            EventList(X).CommandList = curlist
-                            EventList(X).CommandNum = 0
+                            ReDim Preserve EventList(x)
+                            EventList(x).CommandList = curlist
+                            EventList(x).CommandNum = 0
                             frmEditor_Events.lstCommands.AddItem Mid(indent, 1, Len(indent) - 4) & " : " & "End Branch"
                             indent = Mid(indent, 1, Len(indent) - 7)
                             listleftoff(curlist) = i
                             conditionalstage(curlist) = 0
                     End Select
                 ElseIf tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Index = EventType.evShowChoices Then
-                    X = X + 1
+                    x = x + 1
                     Select Case conditionalstage(curlist)
                         Case 0
-                            ReDim Preserve EventList(X)
-                            EventList(X).CommandList = curlist
-                            EventList(X).CommandNum = i
+                            ReDim Preserve EventList(x)
+                            EventList(x).CommandList = curlist
+                            EventList(x).CommandNum = i
                             frmEditor_Events.lstCommands.AddItem indent & "@>" & "Show Choices - Prompt: " & Mid(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text1, 1, 20) & "..."
                             
                             indent = indent & "       "
@@ -1896,16 +1895,16 @@ newlist:
                             GoTo newlist
                         Case 1
                             If Trim$(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text2) <> "" Then
-                                ReDim Preserve EventList(X)
-                                EventList(X).CommandList = curlist
-                                EventList(X).CommandNum = 0
+                                ReDim Preserve EventList(x)
+                                EventList(x).CommandList = curlist
+                                EventList(x).CommandNum = 0
                                 frmEditor_Events.lstCommands.AddItem Mid(indent, 1, Len(indent) - 4) & " : " & "When [" & Trim$(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text2) & "]"
                                 listleftoff(curlist) = i
                                 conditionalstage(curlist) = 2
                                 curlist = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1
                                 GoTo newlist
                             Else
-                                X = X - 1
+                                x = x - 1
                                 listleftoff(curlist) = i
                                 conditionalstage(curlist) = 2
                                 curlist = curlist
@@ -1913,16 +1912,16 @@ newlist:
                             End If
                         Case 2
                             If Trim$(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text3) <> "" Then
-                                ReDim Preserve EventList(X)
-                                EventList(X).CommandList = curlist
-                                EventList(X).CommandNum = 0
+                                ReDim Preserve EventList(x)
+                                EventList(x).CommandList = curlist
+                                EventList(x).CommandNum = 0
                                 frmEditor_Events.lstCommands.AddItem Mid(indent, 1, Len(indent) - 4) & " : " & "When [" & Trim$(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text3) & "]"
                                 listleftoff(curlist) = i
                                 conditionalstage(curlist) = 3
                                 curlist = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2
                                 GoTo newlist
                             Else
-                                X = X - 1
+                                x = x - 1
                                 listleftoff(curlist) = i
                                 conditionalstage(curlist) = 3
                                 curlist = curlist
@@ -1930,16 +1929,16 @@ newlist:
                             End If
                         Case 3
                             If Trim$(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text4) <> "" Then
-                                ReDim Preserve EventList(X)
-                                EventList(X).CommandList = curlist
-                                EventList(X).CommandNum = 0
+                                ReDim Preserve EventList(x)
+                                EventList(x).CommandList = curlist
+                                EventList(x).CommandNum = 0
                                 frmEditor_Events.lstCommands.AddItem Mid(indent, 1, Len(indent) - 4) & " : " & "When [" & Trim$(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text4) & "]"
                                 listleftoff(curlist) = i
                                 conditionalstage(curlist) = 4
                                 curlist = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data3
                                 GoTo newlist
                             Else
-                                X = X - 1
+                                x = x - 1
                                 listleftoff(curlist) = i
                                 conditionalstage(curlist) = 4
                                 curlist = curlist
@@ -1947,35 +1946,35 @@ newlist:
                             End If
                         Case 4
                             If Trim$(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text5) <> "" Then
-                                ReDim Preserve EventList(X)
-                                EventList(X).CommandList = curlist
-                                EventList(X).CommandNum = 0
+                                ReDim Preserve EventList(x)
+                                EventList(x).CommandList = curlist
+                                EventList(x).CommandNum = 0
                                 frmEditor_Events.lstCommands.AddItem Mid(indent, 1, Len(indent) - 4) & " : " & "When [" & Trim$(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text5) & "]"
                                 listleftoff(curlist) = i
                                 conditionalstage(curlist) = 5
                                 curlist = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data4
                                 GoTo newlist
                             Else
-                                X = X - 1
+                                x = x - 1
                                 listleftoff(curlist) = i
                                 conditionalstage(curlist) = 5
                                 curlist = curlist
                                 GoTo newlist
                             End If
                         Case 5
-                            ReDim Preserve EventList(X)
-                            EventList(X).CommandList = curlist
-                            EventList(X).CommandNum = 0
+                            ReDim Preserve EventList(x)
+                            EventList(x).CommandList = curlist
+                            EventList(x).CommandNum = 0
                             frmEditor_Events.lstCommands.AddItem Mid(indent, 1, Len(indent) - 4) & " : " & "Branch End"
                             indent = Mid(indent, 1, Len(indent) - 7)
                             listleftoff(curlist) = i
                             conditionalstage(curlist) = 0
                     End Select
                 Else
-                    X = X + 1
-                    ReDim Preserve EventList(X)
-                    EventList(X).CommandList = curlist
-                    EventList(X).CommandNum = i
+                    x = x + 1
+                    ReDim Preserve EventList(x)
+                    EventList(x).CommandList = curlist
+                    EventList(x).CommandNum = i
                     Select Case tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Index
                         Case EventType.evAddText
                             Select Case tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2
@@ -2171,21 +2170,21 @@ newlist:
                             frmEditor_Events.lstCommands.AddItem indent & "@>" & "Wait " & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1) & " Ms"
                         Case Else
                             'Ghost
-                            X = X - 1
-                            If X = -1 Then
+                            x = x - 1
+                            If x = -1 Then
                                 ReDim EventList(0)
                             Else
-                                ReDim Preserve EventList(X)
+                                ReDim Preserve EventList(x)
                             End If
                     End Select
                 End If
             End If
         Next
         If curlist > 1 Then
-            X = X + 1
-            ReDim Preserve EventList(X)
-            EventList(X).CommandList = curlist
-            EventList(X).CommandNum = tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount + 1
+            x = x + 1
+            ReDim Preserve EventList(x)
+            EventList(x).CommandList = curlist
+            EventList(x).CommandNum = tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount + 1
             frmEditor_Events.lstCommands.AddItem indent & "@> "
             curlist = tmpEvent.Pages(curPageNum).CommandList(curlist).ParentList
             GoTo newlist
@@ -2196,18 +2195,18 @@ newlist:
 End Sub
 
 Sub ListCommandAdd(s As String)
-Static X As Long
+Static x As Long
     frmEditor_Events.lstCommands.AddItem s
     ' scrollbar
-    If X < frmEditor_Events.TextWidth(s & "  ") Then
-       X = frmEditor_Events.TextWidth(s & "  ")
-      If frmEditor_Events.ScaleMode = vbTwips Then X = X / Screen.TwipsPerPixelX ' if twips change to pixels
-      SendMessageByNum frmEditor_Events.lstCommands.hwnd, LB_SETHORIZONTALEXTENT, X, 0
+    If x < frmEditor_Events.TextWidth(s & "  ") Then
+       x = frmEditor_Events.TextWidth(s & "  ")
+      If frmEditor_Events.ScaleMode = vbTwips Then x = x / Screen.TwipsPerPixelX ' if twips change to pixels
+      SendMessageByNum frmEditor_Events.lstCommands.hwnd, LB_SETHORIZONTALEXTENT, x, 0
     End If
 End Sub
 
 Sub AddCommand(Index As Long)
-    Dim curlist As Long, i As Long, X As Long, curslot As Long, p As Long, oldCommandList As CommandListRec
+    Dim curlist As Long, i As Long, x As Long, curslot As Long, p As Long, oldCommandList As CommandListRec
     If tmpEvent.Pages(curPageNum).CommandListCount = 0 Then
         tmpEvent.Pages(curPageNum).CommandListCount = 1
         ReDim tmpEvent.Pages(curPageNum).CommandList(1)
@@ -2243,8 +2242,8 @@ Sub AddCommand(Index As Long)
     Else
         i = EventList(frmEditor_Events.lstCommands.ListIndex).CommandNum
         If i < tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount Then
-            For X = tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount - 1 To i Step -1
-                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(X + 1) = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(X)
+            For x = tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount - 1 To i Step -1
+                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(x + 1) = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(x)
             Next
             curslot = EventList(frmEditor_Events.lstCommands.ListIndex).CommandNum
         Else
@@ -2275,10 +2274,10 @@ Sub AddCommand(Index As Long)
             tmpEvent.Pages(curPageNum).CommandList(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).ConditionalBranch.CommandList).ParentList = curlist
             tmpEvent.Pages(curPageNum).CommandList(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).ConditionalBranch.ElseCommandList).ParentList = curlist
             For i = 0 To 6
-                If frmEditor_Events.optCondition_Index(i).value = True Then X = i
+                If frmEditor_Events.optCondition_Index(i).value = True Then x = i
             Next
             
-            Select Case X
+            Select Case x
                 Case 0 'Player Var
                     tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).ConditionalBranch.Condition = 0
                     tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).ConditionalBranch.Data1 = frmEditor_Events.cmbCondition_PlayerVarIndex.ListIndex + 1
@@ -2500,7 +2499,7 @@ Sub AddCommand(Index As Long)
 End Sub
 
 Public Sub EditEventCommand()
-    Dim i As Long, X As Long, Z As Long, curlist As Long, curslot As Long
+    Dim i As Long, x As Long, Z As Long, curlist As Long, curslot As Long
     i = frmEditor_Events.lstCommands.ListIndex
     If i = -1 Then Exit Sub
     
@@ -2708,9 +2707,9 @@ Public Sub EditEventCommand()
             For i = 1 To Map.EventCount
                 If i <> EditorEvent Then
                     frmEditor_Events.cmbEvent.AddItem Trim$(Map.Events(i).name)
-                    X = X + 1
-                    ListOfEvents(X) = i
-                    If i = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 Then frmEditor_Events.cmbEvent.ListIndex = X
+                    x = x + 1
+                    ListOfEvents(x) = i
+                    If i = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 Then frmEditor_Events.cmbEvent.ListIndex = x
                 End If
             Next
             
@@ -2959,7 +2958,7 @@ Public Sub EditEventCommand()
 End Sub
 
 Public Sub DeleteEventCommand()
-    Dim i As Long, X As Long, Z As Long, curlist As Long, curslot As Long, p As Long, oldCommandList As CommandListRec
+    Dim i As Long, x As Long, Z As Long, curlist As Long, curslot As Long, p As Long, oldCommandList As CommandListRec
     i = frmEditor_Events.lstCommands.ListIndex
     If i = -1 Then Exit Sub
     
@@ -2982,13 +2981,13 @@ Public Sub DeleteEventCommand()
         Else
             oldCommandList = tmpEvent.Pages(curPageNum).CommandList(curlist)
             ReDim tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(p)
-            X = 1
+            x = 1
             tmpEvent.Pages(curPageNum).CommandList(curlist).ParentList = oldCommandList.ParentList
             tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount = p
             For i = 1 To p + 1
                 If i <> curslot Then
-                    tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(X) = oldCommandList.Commands(i)
-                    X = X + 1
+                    tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(x) = oldCommandList.Commands(i)
+                    x = x + 1
                 End If
             Next
         End If
@@ -2996,7 +2995,7 @@ Public Sub DeleteEventCommand()
         tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount = tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount - 1
         p = tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount
         oldCommandList = tmpEvent.Pages(curPageNum).CommandList(curlist)
-        X = 1
+        x = 1
         If p <= 0 Then
             ReDim tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(0)
         Else
@@ -3005,8 +3004,8 @@ Public Sub DeleteEventCommand()
             tmpEvent.Pages(curPageNum).CommandList(curlist).CommandCount = p
             For i = 1 To p + 1
                 If i <> curslot Then
-                    tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(X) = oldCommandList.Commands(i)
-                    X = X + 1
+                    tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(x) = oldCommandList.Commands(i)
+                    x = x + 1
                 End If
             Next
         End If
@@ -3023,7 +3022,7 @@ Public Sub ClearEventCommands()
 End Sub
 
 Public Sub EditCommand()
-    Dim i As Long, X As Long, Z As Long, curlist As Long, curslot As Long
+    Dim i As Long, x As Long, Z As Long, curlist As Long, curslot As Long
     i = frmEditor_Events.lstCommands.ListIndex
     If i = -1 Then Exit Sub
     

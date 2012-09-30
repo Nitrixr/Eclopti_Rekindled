@@ -13,6 +13,7 @@ Dim tmr100 As Long
 Dim tmr10000 As Long
 Dim tmr500, Fadetmr As Long
 Dim fogtmr As Long
+Dim surfTmr As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -23,11 +24,25 @@ Dim fogtmr As Long
         ElapsedTime = tick - FrameTime                 ' Set the time difference for time-based movement
         FrameTime = tick                               ' Set the time second loop time to the first.
 
-        ' * Check surface timers *
+        ' Unload unused surfaces every 10 seconds.
+        If surfTmr < tick Then
+            For i = 1 To NumTextures ' Loop!
+                If gTexture(i).Timer > 0 Then ' Check if it's in use!
+                    If gTexture(i).Timer < tick Then ' Check if it's time to unload.
+                        ' Unload!
+                        Set gTexture(i).Texture = Nothing
+                        ZeroMemory ByVal VarPtr(gTexture(i)), LenB(gTexture(i))
+                        gTexture(i).Timer = 0
+                        AddText "Unloaded texture: " & i, White
+                    End If
+                End If
+                DoEvents
+            Next
+            surfTmr = tick + 10000
+        End If
+        
         ' Sprites
         If tmr10000 < tick Then
-
-
             
             ' check ping
             Call GetPing
@@ -1299,7 +1314,7 @@ Dim lockindex As Long
             If AnimInstance(Index).LoopIndex(Layer) = 0 Then AnimInstance(Index).LoopIndex(Layer) = 1
             
             ' check if frame timer is set, and needs to have a frame change
-            If AnimInstance(Index).timer(Layer) + looptime <= GetTickCount Then
+            If AnimInstance(Index).Timer(Layer) + looptime <= GetTickCount Then
                 ' check if out of range
                 If AnimInstance(Index).frameIndex(Layer) >= FrameCount Then
                     AnimInstance(Index).LoopIndex(Layer) = AnimInstance(Index).LoopIndex(Layer) + 1
@@ -1311,7 +1326,7 @@ Dim lockindex As Long
                 Else
                     AnimInstance(Index).frameIndex(Layer) = AnimInstance(Index).frameIndex(Layer) + 1
                 End If
-                AnimInstance(Index).timer(Layer) = GetTickCount
+                AnimInstance(Index).Timer(Layer) = GetTickCount
             End If
         End If
     Next
@@ -1819,7 +1834,7 @@ Dim i As Long, Index As Long
         .targetType = targetType
         .Msg = Msg
         .colour = colour
-        .timer = GetTickCount
+        .Timer = GetTickCount
         .active = True
     End With
 End Sub
