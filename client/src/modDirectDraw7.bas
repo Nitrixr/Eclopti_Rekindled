@@ -3345,6 +3345,8 @@ errorhandler:
 End Sub
 
 Sub HandleDeviceLost()
+Dim i As Long
+
 'Do a loop while device is lost
    Do While Direct3D_Device.TestCooperativeLevel = D3DERR_DEVICELOST
        Exit Sub
@@ -3358,6 +3360,10 @@ Sub HandleDeviceLost()
    DirectX_ReInit
     
    LoadTextures
+   
+   For i = 1 To NumTextures
+       gTexture(i).Timer = 0 ' Reset all textures, ready to render again!
+   Next
    
 End Sub
 
