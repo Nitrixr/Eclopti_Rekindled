@@ -329,7 +329,6 @@ Dim i As Long
     Next
     
     ReDim gTexture(1)
-
     
     For i = 1 To NumTileSets
         Tex_Tileset(i).Texture = 0

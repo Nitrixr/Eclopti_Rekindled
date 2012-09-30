@@ -24,21 +24,22 @@ Dim surfTmr As Long
         ElapsedTime = tick - FrameTime                 ' Set the time difference for time-based movement
         FrameTime = tick                               ' Set the time second loop time to the first.
 
-        ' Unload unused surfaces every 10 seconds.
+        ' Unload unused surfaces every half-of-surface-timer seconds.
         If surfTmr < tick Then
             For i = 1 To NumTextures ' Loop!
                 If gTexture(i).Timer > 0 Then ' Check if it's in use!
                     If gTexture(i).Timer < tick Then ' Check if it's time to unload.
                         ' Unload!
                         Set gTexture(i).Texture = Nothing
-                        ZeroMemory ByVal VarPtr(gTexture(i)), LenB(gTexture(i))
+                        ' Learn from your mistakes, Lenn, this ain't here for a reason!
+                        'ZeroMemory ByVal VarPtr(gTexture(i)), LenB(gTexture(i))
                         gTexture(i).Timer = 0
                         AddText "Unloaded texture: " & i, White
                     End If
                 End If
                 DoEvents
             Next
-            surfTmr = tick + 10000
+            surfTmr = tick + (SurfaceTimer * 0.5)
         End If
         
         ' Sprites
