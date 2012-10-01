@@ -44,6 +44,7 @@ Public Tex_Resource() As DX8TextureRec
 Public Tex_Animation() As DX8TextureRec
 Public Tex_SpellIcon() As DX8TextureRec
 Public Tex_Face() As DX8TextureRec
+
 Public Tex_Fog() As DX8TextureRec
 Public Tex_Door As DX8TextureRec ' singes
 Public Tex_Blood As DX8TextureRec
@@ -93,7 +94,7 @@ Public Type RECT
     Right As Long
 End Type
 
-Public Const SurfaceTimer As Long = 10000
+Public Const SurfaceTimer As Long = 8000
 Public gTexture() As GlobalTextureRec
 Public NumTextures As Long
 
@@ -160,6 +161,61 @@ errorhandler:
     HandleError "InitDX8", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Function
+End Function
+
+
+Private Function DirectX_ReInit() As Boolean
+
+    On Error GoTo Error_Handler
+
+    Direct3D.GetAdapterDisplayMode D3DADAPTER_DEFAULT, Display_Mode 'Use the current display mode that you
+                                                                    'are already on. Incase you are confused, I'm
+                                                                    'talking about your current screen resolution. ;)
+        
+    Direct3D_Window.Windowed = True 'The app will be in windowed mode.
+
+    Direct3D_Window.SwapEffect = D3DSWAPEFFECT_COPY 'Refresh when the monitor does.
+    Direct3D_Window.BackBufferFormat = Display_Mode.Format 'Sets the format that was retrieved into the backbuffer.
+    'Creates the rendering device with some useful info, along with the info
+    'we've already setup for Direct3D_Window.
+    'Creates the rendering device with some useful info, along with the info
+    Direct3D_Window.BackBufferCount = 1 '1 backbuffer only
+    Direct3D_Window.BackBufferWidth = 800 ' frmMain.picScreen.ScaleWidth 'Match the backbuffer width with the display width
+    Direct3D_Window.BackBufferHeight = 600 'frmMain.picScreen.ScaleHeight 'Match the backbuffer height with the display height
+    Direct3D_Window.hDeviceWindow = frmMain.picScreen.hwnd 'Use frmMain as the device window.
+    
+    With Direct3D_Device
+        .SetVertexShader D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE
+    
+        .SetRenderState D3DRS_LIGHTING, False
+        .SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+        .SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+        .SetRenderState D3DRS_ALPHABLENDENABLE, True
+        .SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
+        .SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
+        .SetRenderState D3DRS_ZENABLE, False
+        .SetRenderState D3DRS_ZWRITEENABLE, False
+        
+        .SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE
+    
+        .SetRenderState D3DRS_POINTSPRITE_ENABLE, 1
+        .SetRenderState D3DRS_POINTSCALE_ENABLE, 0
+    
+        .SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_POINT
+        .SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_POINT
+        .SetTextureStageState 0, D3DTSS_MIPFILTER, D3DTEXF_NONE
+    End With
+    
+    DirectX_ReInit = True
+
+    Exit Function
+    
+Error_Handler:
+    MsgBox "An error occured while initializing DirectX", vbCritical
+    
+    DestroyGame
+    
+    DirectX_ReInit = False
 End Function
 
 Function TryCreateDirectX8Device() As Boolean
@@ -426,9 +482,21 @@ Public Sub RenderTexture(ByRef TextureRec As DX8TextureRec, ByVal dX As Single, 
 End Sub
 
 Public Sub RenderTextureByRects(TextureRec As DX8TextureRec, sRect As RECT, dRect As RECT)
+    Dim TextureNum As Long
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
-
+    
+    ' No idea why a duplicate is actually needed here, seeing as it heads to RenderTexture, but, it just works.
+    ' Leave it at that.
+    TextureNum = TextureRec.Texture
+    
+    If gTexture(TextureNum).Timer = 0 Then
+        LoadTexture TextureRec
+        AddText "Loaded texture: " & TextureNum, White
+        'Sleep 100
+    End If
+    gTexture(TextureNum).Timer = GetTickCount + SurfaceTimer
+    
     RenderTexture TextureRec, dRect.Left, dRect.Top, sRect.Left, sRect.Top, dRect.Right - dRect.Left, dRect.Bottom - dRect.Top, sRect.Right - sRect.Left, sRect.Bottom - sRect.Top, D3DColorRGBA(255, 255, 255, 255)
 
     ' Error handler
@@ -3365,59 +3433,6 @@ Dim i As Long
    Next
    
 End Sub
-
-Private Function DirectX_ReInit() As Boolean
-
-    On Error GoTo Error_Handler
-
-    Direct3D.GetAdapterDisplayMode D3DADAPTER_DEFAULT, Display_Mode 'Use the current display mode that you
-                                                                    'are already on. Incase you are confused, I'm
-                                                                    'talking about your current screen resolution. ;)
-        
-    Direct3D_Window.Windowed = True 'The app will be in windowed mode.
-
-    Direct3D_Window.SwapEffect = D3DSWAPEFFECT_COPY 'Refresh when the monitor does.
-    Direct3D_Window.BackBufferFormat = Display_Mode.Format 'Sets the format that was retrieved into the backbuffer.
-    'Creates the rendering device with some useful info, along with the info
-    'we've already setup for Direct3D_Window.
-    'Creates the rendering device with some useful info, along with the info
-    Direct3D_Window.BackBufferCount = 1 '1 backbuffer only
-    Direct3D_Window.BackBufferWidth = 800 ' frmMain.picScreen.ScaleWidth 'Match the backbuffer width with the display width
-    Direct3D_Window.BackBufferHeight = 600 'frmMain.picScreen.ScaleHeight 'Match the backbuffer height with the display height
-    Direct3D_Window.hDeviceWindow = frmMain.picScreen.hwnd 'Use frmMain as the device window.
-    
-    With Direct3D_Device
-        .SetVertexShader D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE
-    
-        .SetRenderState D3DRS_LIGHTING, False
-        .SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
-        .SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
-        .SetRenderState D3DRS_ALPHABLENDENABLE, True
-        .SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
-        .SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
-        .SetRenderState D3DRS_ZENABLE, False
-        .SetRenderState D3DRS_ZWRITEENABLE, False
-        
-        .SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE
-    
-        .SetRenderState D3DRS_POINTSPRITE_ENABLE, 1
-        .SetRenderState D3DRS_POINTSCALE_ENABLE, 0
-    
-        .SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_POINT
-        .SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_POINT
-    End With
-    
-    DirectX_ReInit = True
-
-    Exit Function
-    
-Error_Handler:
-    MsgBox "An error occured while initializing DirectX", vbCritical
-    
-    DestroyGame
-    
-    DirectX_ReInit = False
-End Function
 
 Public Sub UpdateCamera()
 Dim offsetX As Long

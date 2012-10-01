@@ -1,6 +1,10 @@
 Attribute VB_Name = "modSound"
 Option Explicit
 
+' Sometimes, you might want to overide the IDE check in place of loading. Set this to true when you need it, but,
+' be careful when using it, FMOD is liable to crash, especially if you stop the game without unloading properly!
+Public Const MusicOveride As Boolean = True
+
 ' Hardcoded sound effects
 Public Const Sound_ButtonHover As String = "Cursor1.wav"
 Public Const Sound_ButtonClick As String = "Decision1.wav"
@@ -35,7 +39,7 @@ Dim result As Boolean
 
     On Error GoTo errorhandler
     
-    If App.LogMode = 0 Then GoTo errorhandler
+    If MusicOveride = False Then If App.LogMode = 0 Then GoTo errorhandler
     
     ' init music engine
     result = FSOUND_Init(44100, 32, FSOUND_INIT_USEDEFAULTMIDISYNTH)
