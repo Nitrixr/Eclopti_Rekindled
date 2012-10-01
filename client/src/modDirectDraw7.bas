@@ -1603,6 +1603,7 @@ End Sub
 
 Public Sub DrawWeather()
 Dim color As Long, i As Long, SpriteLeft As Long
+    If Map.Weather = 0 Then Exit Sub
     For i = 1 To MAX_WEATHER_PARTICLES
         If WeatherParticle(i).InUse Then
             If WeatherParticle(i).Type = WeatherStorm Then

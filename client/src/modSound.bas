@@ -3,7 +3,7 @@ Option Explicit
 
 ' Sometimes, you might want to overide the IDE check in place of loading. Set this to true when you need it, but,
 ' be careful when using it, FMOD is liable to crash, especially if you stop the game without unloading properly!
-Public Const MusicOveride As Boolean = True
+Public Const MusicOveride As Boolean = False
 
 ' Hardcoded sound effects
 Public Const Sound_ButtonHover As String = "Cursor1.wav"
