@@ -7,49 +7,49 @@ Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByV
 Public Declare Function GetForegroundWindow Lib "user32" () As Long
 
 ' animated buttons
-Public Const MAX_MENUBUTTONS As Long = 4
-Public Const MAX_MAINBUTTONS As Long = 6
+Public Const MAX_MENUBUTTONS As Byte = 4
+Public Const MAX_MAINBUTTONS As Byte = 6
 Public Const MENUBUTTON_PATH As String = "\Data Files\graphics\gui\menu\buttons\"
 Public Const MAINBUTTON_PATH As String = "\Data Files\graphics\gui\main\buttons\"
 
 ' Hotbar
-Public Const HotbarTop As Long = 2
-Public Const HotbarLeft As Long = 2
-Public Const HotbarOffsetX As Long = 8
+Public Const HotbarTop As Integer = 2 ' Why Integer, and not Byte you ask?
+Public Const HotbarLeft As Integer = 2 ' Well, if a GUI is bigger than 255px, it would obviously be out of a byte's range!
+Public Const HotbarOffsetX As Byte = 8 ' And I don't feel like creating myself needless support posts!
 
 ' Inventory constants
-Public Const InvTop As Long = 24
-Public Const InvLeft As Long = 12
-Public Const InvOffsetY As Long = 3
-Public Const InvOffsetX As Long = 3
-Public Const InvColumns As Long = 5
+Public Const InvTop As Integer = 24
+Public Const InvLeft As Integer = 12
+Public Const InvOffsetY As Byte = 3
+Public Const InvOffsetX As Byte = 3
+Public Const InvColumns As Byte = 5
 
 ' Bank constants
-Public Const BankTop As Long = 38
-Public Const BankLeft As Long = 42
-Public Const BankOffsetY As Long = 3
-Public Const BankOffsetX As Long = 4
-Public Const BankColumns As Long = 11
+Public Const BankTop As Integer = 38
+Public Const BankLeft As Integer = 42
+Public Const BankOffsetY As Byte = 3
+Public Const BankOffsetX As Byte = 4
+Public Const BankColumns As Byte = 11
 
 ' spells constants
-Public Const SpellTop As Long = 24
-Public Const SpellLeft As Long = 12
-Public Const SpellOffsetY As Long = 3
-Public Const SpellOffsetX As Long = 3
-Public Const SpellColumns As Long = 5
+Public Const SpellTop As Integer = 24
+Public Const SpellLeft As Integer = 12
+Public Const SpellOffsetY As Byte = 3
+Public Const SpellOffsetX As Byte = 3
+Public Const SpellColumns As Byte = 5
 
 ' shop constants
-Public Const ShopTop As Long = 6
-Public Const ShopLeft As Long = 8
-Public Const ShopOffsetY As Long = 2
-Public Const ShopOffsetX As Long = 4
-Public Const ShopColumns As Long = 5
+Public Const ShopTop As Integer = 6
+Public Const ShopLeft As Integer = 8
+Public Const ShopOffsetY As Byte = 2
+Public Const ShopOffsetX As Byte = 4
+Public Const ShopColumns As Byte = 5
 
 ' Character consts
-Public Const EqTop As Long = 224
-Public Const EqLeft As Long = 18
-Public Const EqOffsetX As Long = 10
-Public Const EqColumns As Long = 4
+Public Const EqTop As Integer = 224
+Public Const EqLeft As Integer = 18
+Public Const EqOffsetX As Byte = 10
+Public Const EqColumns As Byte = 4
 
 ' values
 Public Const MAX_BYTE As Byte = 255
@@ -59,10 +59,6 @@ Public Const MAX_LONG As Long = 2147483647
 ' path constants
 Public Const SOUND_PATH As String = "\Data Files\sound\"
 Public Const MUSIC_PATH As String = "\Data Files\music\"
-
-' Font variables
-Public Const FONT_NAME As String = "Georgia"
-Public Const FONT_SIZE As Byte = 14
 
 ' Log Path and variables
 Public Const LOG_DEBUG As String = "debug.txt"
@@ -92,38 +88,38 @@ Public Const WALK_SPEED As Byte = 4
 Public Const RUN_SPEED As Byte = 6
 
 ' Tile size constants
-Public Const PIC_X As Long = 32
-Public Const PIC_Y As Long = 32
+Public Const PIC_X As Byte = 32 ' These were Longs?! Come on!
+Public Const PIC_Y As Byte = 32
 
 ' Sprite, item, spell size constants
-Public Const SIZE_X As Long = 32
-Public Const SIZE_Y As Long = 32
+Public Const SIZE_X As Byte = 32
+Public Const SIZE_Y As Byte = 32
 
 ' ********************************************************
 ' * The values below must match with the server's values *
 ' ********************************************************
 
 ' General constants
-Public Const MAX_PLAYERS As Long = 70
-Public Const MAX_ITEMS As Long = 255
-Public Const MAX_NPCS As Long = 255
-Public Const MAX_ANIMATIONS As Long = 255
-Public Const MAX_INV As Long = 35
-Public Const MAX_MAP_ITEMS As Long = 255
-Public Const MAX_MAP_NPCS As Long = 30
-Public Const MAX_SHOPS As Long = 50
-Public Const MAX_PLAYER_SPELLS As Long = 35
-Public Const MAX_SPELLS As Long = 255
-Public Const MAX_TRADES As Long = 30
-Public Const MAX_RESOURCES As Long = 100
-Public Const MAX_LEVELS As Long = 100
-Public Const MAX_BANK As Long = 99
-Public Const MAX_HOTBAR As Long = 12
-Public Const MAX_PARTYS As Long = 35
-Public Const MAX_PARTY_MEMBERS As Long = 4
-Public Const MAX_SWITCHES As Long = 1000
-Public Const MAX_VARIABLES As Long = 1000
-Public Const MAX_WEATHER_PARTICLES As Long = 250
+Public Const MAX_PLAYERS As Byte = 10 ' Set to 20 for loop-based reasons. Feel free to extend.
+Public Const MAX_ITEMS As Integer = 255 ' Well...we don't need it as large as a long, but having it as small as a byte is
+Public Const MAX_NPCS As Integer = 255 ' silly.
+Public Const MAX_ANIMATIONS As Integer = 255
+Public Const MAX_INV As Byte = 35 ' *rolls eyes*
+Public Const MAX_MAP_ITEMS As Byte = 255
+Public Const MAX_MAP_NPCS As Byte = 30 ' *rolls eyes some more*
+Public Const MAX_SHOPS As Integer = 50
+Public Const MAX_PLAYER_SPELLS As Byte = 35
+Public Const MAX_SPELLS As Integer = 255
+Public Const MAX_TRADES As Integer = 30 ' Uhm, if you ever reach that amount of players to warrent that amount of trades, good for you!
+Public Const MAX_RESOURCES As Integer = 100
+Public Const MAX_LEVELS As Byte = 100 ' Well, it's not like you're going to set it beyond 255...
+Public Const MAX_BANK As Integer = 99
+Public Const MAX_HOTBAR As Byte = 12 ' *rolls eyes some more*
+Public Const MAX_PARTYS As Integer = 35
+Public Const MAX_PARTY_MEMBERS As Byte = 4 ' wut.
+Public Const MAX_SWITCHES As Integer = 1000
+Public Const MAX_VARIABLES As Integer = 1000
+Public Const MAX_WEATHER_PARTICLES As Integer = 250 ' Eh, I'll be removing the weather system soon. I'll replace it!
 
 ' Website
 Public Const GAME_WEBSITE As String = "http://www.touchofdeathforums.com"
@@ -138,7 +134,7 @@ Public Const MUSIC_LENGTH As Byte = 40
 Public Const ACCOUNT_LENGTH As Byte = 12
 
 ' Map constants
-Public Const MAX_MAPS As Long = 100
+Public Const MAX_MAPS As Integer = 100
 Public Const MAX_MAPX As Byte = 14
 Public Const MAX_MAPY As Byte = 11
 
@@ -158,6 +154,6 @@ Public Const Half_PIC_X As Integer = PIC_X / 2
 Public Const Half_PIC_Y As Integer = PIC_Y / 2
 
 'Chatbubble
-Public Const ChatBubbleWidth As Long = 200
+Public Const ChatBubbleWidth As Integer = 200
 
-
+' My, it's like nobody knows the word "Integer".

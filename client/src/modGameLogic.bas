@@ -11,9 +11,11 @@ Dim WalkTimer As Long
 Dim tmr25 As Long
 Dim tmr100 As Long
 Dim tmr10000 As Long
-Dim tmr500, Fadetmr As Long
+Dim tmr500 As Long
+Dim Fadetmr As Long
 Dim fogtmr As Long
 Dim surfTmr As Long
+Dim renderTmr As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -202,8 +204,11 @@ Dim surfTmr As Long
         ' *********************
         ' ** Render Graphics **
         ' *********************
-        Call Render_Graphics
-        Call UpdateSounds
+        If renderTmr < tick Then
+            Call Render_Graphics
+            Call UpdateSounds
+            renderTmr = tick + 15
+        End If
         DoEvents
 
         ' Lock fps
@@ -256,9 +261,15 @@ Dim MovementSpeed As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     ' Check if player is walking, and if so process moving them over
+    
+    ' I'm confused. Why add this kind of check in processing movement, when it's the GAME LOOP that needs it?!
+    ' It could've been done there, then EVERYTHING would be fair! ¬_¬
+    
+    ' For now, this would make walking fast (Or slow, depending on your processor speeds),
+    ' But when I overhaul the GameLoop, it'll function the same as before.
     Select Case Player(Index).Moving
-        Case PlayerWalking: MovementSpeed = ((ElapsedTime / 1000) * (RUN_SPEED * SIZE_X))
-        Case PlayerRunning: MovementSpeed = ((ElapsedTime / 1000) * (WALK_SPEED * SIZE_X))
+        Case PlayerWalking: MovementSpeed = RUN_SPEED '((ElapsedTime / 1000) * (RUN_SPEED * SIZE_X))
+        Case PlayerRunning: MovementSpeed = WALK_SPEED '((ElapsedTime / 1000) * (WALK_SPEED * SIZE_X))
         Case Else: Exit Sub
     End Select
     
