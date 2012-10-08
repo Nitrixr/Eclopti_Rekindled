@@ -2,8 +2,8 @@ Attribute VB_Name = "modText"
 Option Explicit
 ' Stuffs
 Public Type POINTAPI
-    x As Long
-    y As Long
+    X As Long
+    Y As Long
 End Type
 
 Public Type CharVA
@@ -34,11 +34,11 @@ Public Font_Georgia As CustomFont
 
 Public Const FVF_SIZE As Long = 28
 
-Public Sub RenderText(ByRef UseFont As CustomFont, ByVal text As String, ByVal x As Long, ByVal y As Long, ByVal color As Long, Optional ByVal Alpha As Long = 0, Optional Shadow As Boolean = True)
+Public Sub RenderText(ByRef UseFont As CustomFont, ByVal text As String, ByVal X As Long, ByVal Y As Long, ByVal color As Long, Optional ByVal Alpha As Long = 0, Optional Shadow As Boolean = True)
 Dim TempVA(0 To 3)  As TLVERTEX
 Dim TempVAS(0 To 3) As TLVERTEX
 Dim TempStr() As String
-Dim count As Integer
+Dim Count As Integer
 Dim Ascii() As Byte
 Dim Row As Integer
 Dim u As Single
@@ -74,7 +74,7 @@ Dim yOffset As Single
     For i = 0 To UBound(TempStr)
         If Len(TempStr(i)) > 0 Then
             yOffset = i * UseFont.CharHeight
-            count = 0
+            Count = 0
             'Convert the characters to the ascii value
             Ascii() = StrConv(TempStr(i), vbFromUnicode)
             
@@ -84,14 +84,14 @@ Dim yOffset As Single
                 Call CopyMemory(TempVA(0), UseFont.HeaderInfo.CharVA(Ascii(j - 1)).Vertex(0), FVF_SIZE * 4)
                 
                 'Set up the verticies
-                TempVA(0).x = x + count
-                TempVA(0).y = y + yOffset
-                TempVA(1).x = TempVA(1).x + x + count
-                TempVA(1).y = TempVA(0).y
-                TempVA(2).x = TempVA(0).x
-                TempVA(2).y = TempVA(2).y + TempVA(0).y
-                TempVA(3).x = TempVA(1).x
-                TempVA(3).y = TempVA(2).y
+                TempVA(0).X = X + Count
+                TempVA(0).Y = Y + yOffset
+                TempVA(1).X = TempVA(1).X + X + Count
+                TempVA(1).Y = TempVA(0).Y
+                TempVA(2).X = TempVA(0).X
+                TempVA(2).Y = TempVA(2).Y + TempVA(0).Y
+                TempVA(3).X = TempVA(1).X
+                TempVA(3).Y = TempVA(2).Y
                 
                 'Set the colors
                 TempVA(0).color = TempColor
@@ -103,7 +103,7 @@ Dim yOffset As Single
                 Call Direct3D_Device.DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, TempVA(0), Len(TempVA(0)))
                 
                 'Shift over the the position to render the next character
-                count = count + UseFont.HeaderInfo.CharWidth(Ascii(j - 1))
+                Count = Count + UseFont.HeaderInfo.CharWidth(Ascii(j - 1))
                 
                 'Check to reset the color
                 If ResetColor Then
@@ -120,14 +120,14 @@ Sub EngineInitFontTextures()
     NumTextures = NumTextures + 1
     ReDim Preserve gTexture(NumTextures)
     Font_Default.Texture.Texture = NumTextures
-    Font_Default.Texture.filepath = App.Path & FONT_PATH & "texdefault.png"
+    Font_Default.Texture.FilePath = App.Path & FONT_PATH & "texdefault.png"
     LoadTexture Font_Default.Texture
     
     ' Georgia
     NumTextures = NumTextures + 1
     ReDim Preserve gTexture(NumTextures)
     Font_Georgia.Texture.Texture = NumTextures
-    Font_Georgia.Texture.filepath = App.Path & FONT_PATH & "georgia.png"
+    Font_Georgia.Texture.FilePath = App.Path & FONT_PATH & "georgia.png"
     LoadTexture Font_Georgia.Texture
 End Sub
 
@@ -173,29 +173,29 @@ Dim v As Single
             .Vertex(0).RHW = 1
             .Vertex(0).TU = u
             .Vertex(0).TV = v
-            .Vertex(0).x = 0
-            .Vertex(0).y = 0
+            .Vertex(0).X = 0
+            .Vertex(0).Y = 0
             .Vertex(0).Z = 0
             .Vertex(1).color = D3DColorARGB(255, 0, 0, 0)
             .Vertex(1).RHW = 1
             .Vertex(1).TU = u + theFont.ColFactor
             .Vertex(1).TV = v
-            .Vertex(1).x = theFont.HeaderInfo.CellWidth
-            .Vertex(1).y = 0
+            .Vertex(1).X = theFont.HeaderInfo.CellWidth
+            .Vertex(1).Y = 0
             .Vertex(1).Z = 0
             .Vertex(2).color = D3DColorARGB(255, 0, 0, 0)
             .Vertex(2).RHW = 1
             .Vertex(2).TU = u
             .Vertex(2).TV = v + theFont.RowFactor
-            .Vertex(2).x = 0
-            .Vertex(2).y = theFont.HeaderInfo.CellHeight
+            .Vertex(2).X = 0
+            .Vertex(2).Y = theFont.HeaderInfo.CellHeight
             .Vertex(2).Z = 0
             .Vertex(3).color = D3DColorARGB(255, 0, 0, 0)
             .Vertex(3).RHW = 1
             .Vertex(3).TU = u + theFont.ColFactor
             .Vertex(3).TV = v + theFont.RowFactor
-            .Vertex(3).x = theFont.HeaderInfo.CellWidth
-            .Vertex(3).y = theFont.HeaderInfo.CellHeight
+            .Vertex(3).X = theFont.HeaderInfo.CellWidth
+            .Vertex(3).Y = theFont.HeaderInfo.CellHeight
             .Vertex(3).Z = 0
         End With
     Next LoopChar
@@ -334,12 +334,12 @@ Dim npcNum As Long
     End Select
 
     name = Trim$(Npc(npcNum).name)
-    TextX = ConvertMapX(MapNpc(Index).x * PIC_X) + MapNpc(Index).xOffset + (PIC_X \ 2) - (getWidth(Font_Default, (Trim$(name))) / 2)
+    TextX = ConvertMapX(MapNpc(Index).X * PIC_X) + MapNpc(Index).xOffset + (PIC_X \ 2) - (getWidth(Font_Default, (Trim$(name))) / 2)
     If Npc(npcNum).Sprite < 1 Or Npc(npcNum).Sprite > NumCharacters Then
-        TextY = ConvertMapY(MapNpc(Index).y * PIC_Y) + MapNpc(Index).yOffset - 16
+        TextY = ConvertMapY(MapNpc(Index).Y * PIC_Y) + MapNpc(Index).yOffset - 16
     Else
         ' Determine location for text
-        TextY = ConvertMapY(MapNpc(Index).y * PIC_Y) + MapNpc(Index).yOffset - (Tex_Character(Npc(npcNum).Sprite).Height / 4) + 16
+        TextY = ConvertMapY(MapNpc(Index).Y * PIC_Y) + MapNpc(Index).yOffset - (Tex_Character(Npc(npcNum).Sprite).Height / 4) + 16
     End If
 
     ' Draw name
@@ -355,8 +355,8 @@ errorhandler:
 End Sub
 
 Public Function DrawMapAttributes()
-    Dim x As Long
-    Dim y As Long
+    Dim X As Long
+    Dim Y As Long
     Dim tx As Long
     Dim ty As Long
     
@@ -364,12 +364,12 @@ Public Function DrawMapAttributes()
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If frmEditor_Map.optAttribs.value Then
-        For x = TileView.Left To TileView.Right
-            For y = TileView.Top To TileView.Bottom
-                If IsValidMapPoint(x, y) Then
-                    With Map.Tile(x, y)
-                        tx = ((ConvertMapX(x * PIC_X)) - 4) + (PIC_X * 0.5)
-                        ty = ((ConvertMapY(y * PIC_Y)) - 7) + (PIC_Y * 0.5)
+        For X = TileView.Left To TileView.Right
+            For Y = TileView.Top To TileView.Bottom
+                If IsValidMapPoint(X, Y) Then
+                    With Map.Tile(X, Y)
+                        tx = ((ConvertMapX(X * PIC_X)) - 4) + (PIC_X * 0.5)
+                        ty = ((ConvertMapY(Y * PIC_Y)) - 7) + (PIC_Y * 0.5)
                         Select Case .Type
                             Case TileBlocked
                                 RenderText Font_Default, "B", tx, ty, BrightRed, 0
@@ -417,7 +417,7 @@ errorhandler:
 End Function
 
 Sub DrawActionMsg(ByVal Index As Long)
-    Dim x As Long, y As Long, i As Long, Time As Long
+    Dim X As Long, Y As Long, i As Long, Time As Long
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -430,24 +430,24 @@ Sub DrawActionMsg(ByVal Index As Long)
         Case MsgStatic
             Time = 1500
 
-            If ActionMsg(Index).y > 0 Then
-                x = ActionMsg(Index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
-                y = ActionMsg(Index).y - Int(PIC_Y \ 2) - 2
+            If ActionMsg(Index).Y > 0 Then
+                X = ActionMsg(Index).X + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
+                Y = ActionMsg(Index).Y - Int(PIC_Y \ 2) - 2
             Else
-                x = ActionMsg(Index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
-                y = ActionMsg(Index).y - Int(PIC_Y \ 2) + 18
+                X = ActionMsg(Index).X + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
+                Y = ActionMsg(Index).Y - Int(PIC_Y \ 2) + 18
             End If
 
         Case MsgScroll
             Time = 1500
         
-            If ActionMsg(Index).y > 0 Then
-                x = ActionMsg(Index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
-                y = ActionMsg(Index).y - Int(PIC_Y \ 2) - 2 - (ActionMsg(Index).Scroll * 0.6)
+            If ActionMsg(Index).Y > 0 Then
+                X = ActionMsg(Index).X + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
+                Y = ActionMsg(Index).Y - Int(PIC_Y \ 2) - 2 - (ActionMsg(Index).Scroll * 0.6)
                 ActionMsg(Index).Scroll = ActionMsg(Index).Scroll + 1
             Else
-                x = ActionMsg(Index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
-                y = ActionMsg(Index).y - Int(PIC_Y \ 2) + 18 + (ActionMsg(Index).Scroll * 0.6)
+                X = ActionMsg(Index).X + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
+                Y = ActionMsg(Index).Y - Int(PIC_Y \ 2) + 18 + (ActionMsg(Index).Scroll * 0.6)
                 ActionMsg(Index).Scroll = ActionMsg(Index).Scroll + 1
             End If
 
@@ -463,16 +463,16 @@ Sub DrawActionMsg(ByVal Index As Long)
                     End If
                 End If
             Next
-            x = (frmMain.picScreen.Width \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
-            y = 425
+            X = (frmMain.picScreen.Width \ 2) - ((Len(Trim$(ActionMsg(Index).message)) \ 2) * 8)
+            Y = 425
 
     End Select
     
-    x = ConvertMapX(x)
-    y = ConvertMapY(y)
+    X = ConvertMapX(X)
+    Y = ConvertMapY(Y)
 
     If GetTickCount < ActionMsg(Index).Created + Time Then
-        RenderText Font_Default, ActionMsg(Index).message, x, y, ActionMsg(Index).color, 0
+        RenderText Font_Default, ActionMsg(Index).message, X, Y, ActionMsg(Index).color, 0
     Else
         ClearActionMsg Index
     End If
@@ -534,21 +534,21 @@ Dim name As String
     name = Trim$(Map.MapEvents(Index).name)
     
     ' calc pos
-    TextX = ConvertMapX(Map.MapEvents(Index).x * PIC_X) + Map.MapEvents(Index).xOffset + (PIC_X \ 2) - (getWidth(Font_Default, (Trim$(name))) / 2)
+    TextX = ConvertMapX(Map.MapEvents(Index).X * PIC_X) + Map.MapEvents(Index).xOffset + (PIC_X \ 2) - (getWidth(Font_Default, (Trim$(name))) / 2)
     If Map.MapEvents(Index).GraphicType = 0 Then
-        TextY = ConvertMapY(Map.MapEvents(Index).y * PIC_Y) + Map.MapEvents(Index).yOffset - 16
+        TextY = ConvertMapY(Map.MapEvents(Index).Y * PIC_Y) + Map.MapEvents(Index).yOffset - 16
     ElseIf Map.MapEvents(Index).GraphicType = 1 Then
         If Map.MapEvents(Index).GraphicNum < 1 Or Map.MapEvents(Index).GraphicNum > NumCharacters Then
-            TextY = ConvertMapY(Map.MapEvents(Index).y * PIC_Y) + Map.MapEvents(Index).yOffset - 16
+            TextY = ConvertMapY(Map.MapEvents(Index).Y * PIC_Y) + Map.MapEvents(Index).yOffset - 16
         Else
             ' Determine location for text
-            TextY = ConvertMapY(Map.MapEvents(Index).y * PIC_Y) + Map.MapEvents(Index).yOffset - (Tex_Character(Map.MapEvents(Index).GraphicNum).Height / 4) + 16
+            TextY = ConvertMapY(Map.MapEvents(Index).Y * PIC_Y) + Map.MapEvents(Index).yOffset - (Tex_Character(Map.MapEvents(Index).GraphicNum).Height / 4) + 16
         End If
     ElseIf Map.MapEvents(Index).GraphicType = 2 Then
         If Map.MapEvents(Index).GraphicY2 > 0 Then
-            TextY = ConvertMapY(Map.MapEvents(Index).y * PIC_Y) + Map.MapEvents(Index).yOffset - ((Map.MapEvents(Index).GraphicY2 - Map.MapEvents(Index).GraphicY) * 32) + 16
+            TextY = ConvertMapY(Map.MapEvents(Index).Y * PIC_Y) + Map.MapEvents(Index).yOffset - ((Map.MapEvents(Index).GraphicY2 - Map.MapEvents(Index).GraphicY) * 32) + 16
         Else
-            TextY = ConvertMapY(Map.MapEvents(Index).y * PIC_Y) + Map.MapEvents(Index).yOffset - 32 + 16
+            TextY = ConvertMapY(Map.MapEvents(Index).Y * PIC_Y) + Map.MapEvents(Index).yOffset - 32 + 16
         End If
     End If
 
@@ -564,23 +564,23 @@ errorhandler:
 End Sub
 
 Public Sub DrawChatBubble(ByVal Index As Long)
-Dim theArray() As String, x As Long, y As Long, i As Long, MaxWidth As Long, x2 As Long, y2 As Long, colour As Long
+Dim theArray() As String, X As Long, Y As Long, i As Long, MaxWidth As Long, x2 As Long, Y2 As Long, colour As Long
     
     With chatBubble(Index)
         If .targetType = TargetPlayer Then
             ' it's a player
             If GetPlayerMap(.target) = GetPlayerMap(MyIndex) Then
                 ' it's on our map - get co-ords
-                x = ConvertMapX((Player(.target).x * 32) + Player(.target).xOffset) + 16
-                y = ConvertMapY((Player(.target).y * 32) + Player(.target).yOffset) - 40
+                X = ConvertMapX((Player(.target).X * 32) + Player(.target).xOffset) + 16
+                Y = ConvertMapY((Player(.target).Y * 32) + Player(.target).yOffset) - 40
             End If
         ElseIf .targetType = TargetNPC Then
             ' it's on our map - get co-ords
-            x = ConvertMapX((MapNpc(.target).x * 32) + MapNpc(.target).xOffset) + 16
-            y = ConvertMapY((MapNpc(.target).y * 32) + MapNpc(.target).yOffset) - 40
+            X = ConvertMapX((MapNpc(.target).X * 32) + MapNpc(.target).xOffset) + 16
+            Y = ConvertMapY((MapNpc(.target).Y * 32) + MapNpc(.target).yOffset) - 40
         ElseIf .targetType = TargetEvent Then
-            x = ConvertMapX((Map.MapEvents(.target).x * 32) + Map.MapEvents(.target).xOffset) + 16
-            y = ConvertMapY((Map.MapEvents(.target).y * 32) + Map.MapEvents(.target).yOffset) - 40
+            X = ConvertMapX((Map.MapEvents(.target).X * 32) + Map.MapEvents(.target).xOffset) + 16
+            Y = ConvertMapY((Map.MapEvents(.target).Y * 32) + Map.MapEvents(.target).yOffset) - 40
         End If
         
         ' word wrap the text
@@ -592,39 +592,39 @@ Dim theArray() As String, x As Long, y As Long, i As Long, MaxWidth As Long, x2 
         Next
                 
         ' calculate the new position
-        x2 = x - (MaxWidth \ 2)
-        y2 = y - (UBound(theArray) * 12)
+        x2 = X - (MaxWidth \ 2)
+        Y2 = Y - (UBound(theArray) * 12)
                 
         ' render bubble - top left
-        RenderTexture Tex_ChatBubble, x2 - 9, y2 - 5, 0, 0, 9, 5, 9, 5
+        RenderTexture Tex_ChatBubble, x2 - 9, Y2 - 5, 0, 0, 9, 5, 9, 5
         ' top right
-        RenderTexture Tex_ChatBubble, x2 + MaxWidth, y2 - 5, 119, 0, 9, 5, 9, 5
+        RenderTexture Tex_ChatBubble, x2 + MaxWidth, Y2 - 5, 119, 0, 9, 5, 9, 5
         ' top
-        RenderTexture Tex_ChatBubble, x2, y2 - 5, 10, 0, MaxWidth, 5, 5, 5
+        RenderTexture Tex_ChatBubble, x2, Y2 - 5, 10, 0, MaxWidth, 5, 5, 5
         ' bottom left
-        RenderTexture Tex_ChatBubble, x2 - 9, y, 0, 19, 9, 6, 9, 6
+        RenderTexture Tex_ChatBubble, x2 - 9, Y, 0, 19, 9, 6, 9, 6
         ' bottom right
-        RenderTexture Tex_ChatBubble, x2 + MaxWidth, y, 119, 19, 9, 6, 9, 6
+        RenderTexture Tex_ChatBubble, x2 + MaxWidth, Y, 119, 19, 9, 6, 9, 6
         ' bottom - left half
-        RenderTexture Tex_ChatBubble, x2, y, 10, 19, (MaxWidth \ 2) - 5, 6, 9, 6
+        RenderTexture Tex_ChatBubble, x2, Y, 10, 19, (MaxWidth \ 2) - 5, 6, 9, 6
         ' bottom - right half
-        RenderTexture Tex_ChatBubble, x2 + (MaxWidth \ 2) + 6, y, 10, 19, (MaxWidth \ 2) - 5, 6, 9, 6
+        RenderTexture Tex_ChatBubble, x2 + (MaxWidth \ 2) + 6, Y, 10, 19, (MaxWidth \ 2) - 5, 6, 9, 6
         ' left
-        RenderTexture Tex_ChatBubble, x2 - 9, y2, 0, 6, 9, (UBound(theArray) * 12), 9, 1
+        RenderTexture Tex_ChatBubble, x2 - 9, Y2, 0, 6, 9, (UBound(theArray) * 12), 9, 1
         ' right
-        RenderTexture Tex_ChatBubble, x2 + MaxWidth, y2, 119, 6, 9, (UBound(theArray) * 12), 9, 1
+        RenderTexture Tex_ChatBubble, x2 + MaxWidth, Y2, 119, 6, 9, (UBound(theArray) * 12), 9, 1
         ' center
-        RenderTexture Tex_ChatBubble, x2, y2, 9, 5, MaxWidth, (UBound(theArray) * 12), 1, 1
+        RenderTexture Tex_ChatBubble, x2, Y2, 9, 5, MaxWidth, (UBound(theArray) * 12), 1, 1
         ' little pointy bit
-        RenderTexture Tex_ChatBubble, x - 5, y, 58, 19, 11, 11, 11, 11
+        RenderTexture Tex_ChatBubble, X - 5, Y, 58, 19, 11, 11, 11, 11
                 
         ' render each line centralised
         For i = 1 To UBound(theArray)
-            RenderText Font_Georgia, theArray(i), x - (EngineGetTextWidth(Font_Default, theArray(i)) / 2), y2, DarkBrown
-            y2 = y2 + 12
+            RenderText Font_Georgia, theArray(i), X - (EngineGetTextWidth(Font_Default, theArray(i)) / 2), Y2, DarkBrown
+            Y2 = Y2 + 12
         Next
         ' check if it's timed out - close it if so
-        If .timer + 5000 < GetTickCount Then
+        If .Timer + 5000 < GetTickCount Then
             .active = False
         End If
     End With
