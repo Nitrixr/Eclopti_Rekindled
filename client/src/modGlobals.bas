@@ -111,16 +111,6 @@ Public PlayerBuffer As String
 Public InGame As Boolean
 Public isLogging As Boolean
 
-' Ignore this. I was just testing stuff out! Coming soon!
-' The buffer check. It's an array, because it's used for more than one thing!
-'Public Const MAX_BUFFERS As Byte = 2
-'Public HasBuffered(1 To MAX_BUFFERS) As Boolean
-'Public BufferVB(1 To MAX_BUFFERS) As Direct3DVertexBuffer8
-'Public BufferVBS(1 To MAX_BUFFERS) As Direct3DVertexBuffer8
-
-'Public TileVA() As TLVERTEX
-'Public TileVAS() As TLVERTEX
-
 ' Text variables
 Public TexthDC As Long
 Public GameFont As Long
